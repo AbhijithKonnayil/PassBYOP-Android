@@ -27,7 +27,14 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,6 +60,27 @@ public class MainActivity extends AppCompatActivity {
         etUsername = findViewById(R.id.etUsername);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
+        Retrofit retrofit = new Retrofit.Builder()
+                            .baseUrl(Api.BASE_URL)
+                            .addConverterFactory(GsonConverterFactory.create()).build();
+
+        Api api = retrofit.create(Api.class);
+        Call<List<RetroUserModel>> call = api.getUser();
+        call.enqueue(new Callback<List<RetroUserModel>>() {
+            @Override
+            public void onResponse(Call<List<RetroUserModel>> call, Response<List<RetroUserModel>> response) {
+                    List<RetroUserModel> user = response.body();
+                    Log.e("User",user.toString());
+                    Toast.makeText(getApplicationContext(),"Sucess",Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onFailure(Call<List<RetroUserModel>> call, Throwable t) {
+                Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_SHORT).show();
+                Log.e("Error",t.getMessage());
+            }
+        });
 
         dbref = FirebaseDatabase.getInstance().getReference("user");
 
@@ -186,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
                     });
         }
     }
+
 
 
 }
