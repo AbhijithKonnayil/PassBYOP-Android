@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "249278620871",
+    "firebase_url": "https://passbyop-ef863.firebaseio.com",
+    "project_id": "passbyop-ef863",
+    "storage_bucket": "passbyop-ef863.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:249278620871:android:9f5362719877d1dc",
+        "android_client_info": {
+          "package_name": "com.example.abhi.passbyop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "249278620871-ibri7u6klpqvb1cnfqoj2889jbhbhco9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.abhi.passbyop",
+            "certificate_hash": "ddc5964558a1bbff541d8142a65497cae8145b78"
+          }
+        },
+        {
+          "client_id": "249278620871-br53kcij2odlnlblqq4kmfiig233endl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGG_3ia4-hx0kihj8sQZliDbKWQL7mkPA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "249278620871-br53kcij2odlnlblqq4kmfiig233endl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

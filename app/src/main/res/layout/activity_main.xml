@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/etUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Username"/>
+    <LinearLayout
+        android:id="@+id/layout_button"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:weightSum="2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btnChoose"
+            android:text="Choose"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+    <RelativeLayout
+        android:background="@color/colorPrimary"
+        android:layout_width="700px"
+        android:layout_height="700px">
+        <ImageView
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:id="@+id/imgView"
+            android:layout_width="700px"
+            android:layout_height="700px"
+            android:background="@color/colorAccent"
+            />
+        <View
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="100px"
+            android:layout_width="700px"
+            android:layout_height="1dp"
+            android:background="@android:color/black" />
+        <View
+            android:layout_marginTop="200px"
+            android:layout_width="700px"
+            android:layout_height="1dp"
+            android:background="@android:color/black" />
+        <View
+            android:layout_marginTop="300px"
+            android:layout_width="700px"
+            android:layout_height="1dp"
+            android:background="@android:color/black" />
+        <View
+            android:layout_marginTop="400px"
+            android:layout_width="700px"
+            android:layout_height="1dp"
+            android:background="@android:color/black" />
+        <View
+            android:layout_marginTop="500px"
+            android:layout_width="700px"
+            android:layout_height="1dp"
+            android:background="@android:color/black" />
+        <View
+            android:layout_marginTop="600px"
+            android:layout_width="700px"
+            android:layout_height="1dp"
+            android:background="@android:color/black" />
+        
+        <View
+            android:layout_marginLeft="100px"
+            android:layout_width="1dp"
+            android:layout_height="700px"
+            android:background="@android:color/black" />
+        <View
+            android:layout_marginLeft="200px"
+            android:layout_width="1dp"
+            android:layout_height="700px"
+            android:background="@android:color/black" />
+        <View
+            android:layout_marginLeft="300px"
+            android:layout_width="1dp"
+            android:layout_height="700px"
+            android:background="@android:color/black" />
+        <View
+            android:layout_marginLeft="400px"
+            android:layout_width="1dp"
+            android:layout_height="700px"
+            android:background="@android:color/black" />
+        <View
+            android:layout_marginLeft="500px"
+            android:layout_width="1dp"
+            android:layout_height="700px"
+            android:background="@android:color/black" />
+
+        <View
+            android:layout_marginLeft="600px"
+            android:layout_width="1dp"
+            android:layout_height="700px"
+            android:background="@android:color/black" />
+
+    </RelativeLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/login"
+            android:text="Login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/btnUpload"
+            android:text="Sign Up"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</LinearLayout>
