@@ -65,18 +65,17 @@ public class MainActivity extends AppCompatActivity {
                             .addConverterFactory(GsonConverterFactory.create()).build();
 
         Api api = retrofit.create(Api.class);
-        Call<List<RetroUserModel>> call = api.getUser();
-        call.enqueue(new Callback<List<RetroUserModel>>() {
+        Call<RetroUserModel> call = api.getUser();
+        call.enqueue(new Callback<RetroUserModel>() {
             @Override
-            public void onResponse(Call<List<RetroUserModel>> call, Response<List<RetroUserModel>> response) {
-                    List<RetroUserModel> user = response.body();
-                    Log.e("User",user.toString());
-                    Toast.makeText(getApplicationContext(),"Sucess",Toast.LENGTH_SHORT).show();
-
+            public void onResponse(Call<RetroUserModel> call, Response<RetroUserModel> response) {
+                RetroUserModel user = response.body();
+                Log.e("User",user.getUsername());
+                Toast.makeText(getApplicationContext(),"Sucess",Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onFailure(Call<List<RetroUserModel>> call, Throwable t) {
+            public void onFailure(Call<RetroUserModel> call, Throwable t) {
                 Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_SHORT).show();
                 Log.e("Error",t.getMessage());
             }
