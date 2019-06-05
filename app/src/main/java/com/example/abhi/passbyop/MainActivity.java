@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseStorage storage;
     StorageReference storageReference;
     DatabaseReference dbref;
+    Retrofit retrofit;
 
     private final int PICK_IMAGE_REQUEST = 71;
 
@@ -61,17 +62,16 @@ public class MainActivity extends AppCompatActivity {
         etUsername = findViewById(R.id.etUsername);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
-        final Retrofit retrofit = new Retrofit.Builder()
+        retrofit = new Retrofit.Builder()
                             .baseUrl(Api.BASE_URL)
                             .addConverterFactory(GsonConverterFactory.create()).build();
-
-
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Api api = retrofit.create(Api.class);
+
                 String username = etUsername.getText().toString();
+                Api api = retrofit.create(Api.class);
                 Call<RetroUserModel> call = api.getUser(username);
                 call.enqueue(new Callback<RetroUserModel>() {
                     @Override
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 });
 
             }
-        }); 
+        });
 
         dbref = FirebaseDatabase.getInstance().getReference("user");
 
@@ -192,17 +192,29 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
-                            Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                            Api api = retrofit.create(Api.class);
                             String username = etUsername.getText().toString();
-                            dbref.child(username).child("image").setValue(storageRef);
-                            dbref.child(username).child("coor").child("X0").setValue(X0);
-                            dbref.child(username).child("coor").child("Y0").setValue(Y0);
-                            dbref.child(username).child("coor").child("X1").setValue(X1);
-                            dbref.child(username).child("coor").child("Y1").setValue(Y1);
-                            dbref.child(username).child("coor").child("X2").setValue(X2);
-                            dbref.child(username).child("coor").child("Y2").setValue(Y2);
-                            dbref.child(username).child("coor").child("X3").setValue(X3);
-                            dbref.child(username).child("coor").child("Y3").setValue(Y3);
+                            RetroUserModel retroUserModel = new RetroUserModel(username,X0,Y0,X1,Y1,X2,Y2,X3,Y3,storageRef);
+                            Call<RetroUserModel> call = api.createUser(retroUserModel);
+                            call.enqueue(new Callback<RetroUserModel>() {
+                                @Override
+                                public void onResponse(Call<RetroUserModel> call, Response<RetroUserModel> response) {
+                                    if(!response.isSuccessful()){
+                                        Log.e("Errror on register ", ""+response.code());
+                                        return;
+                                    }
+                                    RetroUserModel res = response.body();
+                                    Log.e("Sucess on register ", ""+response.code());
+                                    Log.e("Username  ", ""+res.getUsername()+ res.getImage_url());
+                                }
+
+                                @Override
+                                public void onFailure(Call<RetroUserModel> call, Throwable t) {
+
+                                }
+                            });
+                            Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+
 
                         }
                     })
