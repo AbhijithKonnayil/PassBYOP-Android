@@ -38,7 +38,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnChoose, btnUpload;
+    private Button btnChoose, btnUpload,btnLogin;
     private ImageView imageView;
     private EditText etUsername;
     private int X0,Y0,X1,Y1,X2,Y2,X3,Y3,touchCount=0;
@@ -56,30 +56,40 @@ public class MainActivity extends AppCompatActivity {
 
         btnChoose = (Button) findViewById(R.id.btnChoose);
         btnUpload = (Button) findViewById(R.id.btnUpload);
+        btnLogin = (Button) findViewById(R.id.login);
         imageView = (ImageView) findViewById(R.id.imgView);
         etUsername = findViewById(R.id.etUsername);
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
-        Retrofit retrofit = new Retrofit.Builder()
+        final Retrofit retrofit = new Retrofit.Builder()
                             .baseUrl(Api.BASE_URL)
                             .addConverterFactory(GsonConverterFactory.create()).build();
 
-        Api api = retrofit.create(Api.class);
-        Call<RetroUserModel> call = api.getUser();
-        call.enqueue(new Callback<RetroUserModel>() {
-            @Override
-            public void onResponse(Call<RetroUserModel> call, Response<RetroUserModel> response) {
-                RetroUserModel user = response.body();
-                Log.e("User",user.getUsername());
-                Toast.makeText(getApplicationContext(),"Sucess",Toast.LENGTH_SHORT).show();
-            }
 
+
+        btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFailure(Call<RetroUserModel> call, Throwable t) {
-                Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_SHORT).show();
-                Log.e("Error",t.getMessage());
+            public void onClick(View view) {
+                Api api = retrofit.create(Api.class);
+                String username = etUsername.getText().toString();
+                Call<RetroUserModel> call = api.getUser(username);
+                call.enqueue(new Callback<RetroUserModel>() {
+                    @Override
+                    public void onResponse(Call<RetroUserModel> call, Response<RetroUserModel> response) {
+                        RetroUserModel user = response.body();
+                        Log.e("User",user.getUsername());
+                        Toast.makeText(getApplicationContext(),"Sucess",Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(Call<RetroUserModel> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_SHORT).show();
+                        Log.e("Error",t.getMessage());
+                    }
+                });
+
             }
-        });
+        }); 
 
         dbref = FirebaseDatabase.getInstance().getReference("user");
 
