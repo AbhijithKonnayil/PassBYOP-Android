@@ -14,8 +14,8 @@ public interface Api {
     //@GET("endpoint")
     //Call<RetroUserModel> getUser();
 
-    @GET("endpoint/{username}")
-    Call<RetroUserModel> getUser(@Path("username") String username);
+    @POST("endpoint/")
+    Call<RetroUserModel> getUser(@Body RetroUserModel userModel);
 
     @POST("endpoint/register")
     Call<RetroUserModel>createUser(@Body RetroUserModel userModel);

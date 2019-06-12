@@ -1,5 +1,6 @@
 package com.example.abhi.passbyop;
 
+import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -29,7 +30,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.util.UUID;
-import java.util.Vector;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,9 +37,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
     private TextView title;
-    private Button btnChoose, btnRegister, btnLogin;
+    private Button btnChoose, btnUpload, btnLogin;
     private ImageView imageView;
     private EditText etUsername;
     private int X0, Y0, X1, Y1, X2, Y2, X3, Y3, touchCount = 0;
@@ -54,14 +54,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_register);
         Typeface custom_font = Typeface.createFromAsset(getAssets(),"fonts/KaushanScript-Regular.ttf");
         title = findViewById(R.id.title);
         title.setTypeface(custom_font);
-
         btnChoose = (Button) findViewById(R.id.btnChoose);
-        btnRegister = (Button) findViewById(R.id.btnUpload);
-        btnLogin = (Button) findViewById(R.id.login);
+        btnUpload = (Button) findViewById(R.id.btnUpload);
         imageView = (ImageView) findViewById(R.id.imgView);
         etUsername = findViewById(R.id.etUsername);
         storage = FirebaseStorage.getInstance();
@@ -70,12 +68,6 @@ public class MainActivity extends AppCompatActivity {
                 .baseUrl(Api.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, RegisterActivity.class));
-            }
-        });
         dbref = FirebaseDatabase.getInstance().getReference("user");
 
         imageView.setOnTouchListener(new View.OnTouchListener() {
@@ -90,26 +82,26 @@ public class MainActivity extends AppCompatActivity {
                             X0 = Math.round(screenX / 100) * 100;
                             Y0 = Math.round(screenY / 100) * 100;
                             Log.e(String.valueOf(X0), String.valueOf(Y0 + " " + touchCount));
-                            Toast.makeText(MainActivity.this, "Need 3 Points more", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Need 3 Points more", Toast.LENGTH_SHORT).show();
                             break;
 
                         case 1:
                             X1 = Math.round(screenX / 100) * 100;
                             Y1 = Math.round(screenY / 100) * 100;
                             Log.e(String.valueOf(X1), String.valueOf(Y1 + " " + touchCount));
-                            Toast.makeText(MainActivity.this, "Need 2 Points more", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Need 2 Points more", Toast.LENGTH_SHORT).show();
                             break;
                         case 2:
                             X2 = Math.round(screenX / 100) * 100;
                             Y2 = Math.round(screenY / 100) * 100;
                             Log.e(String.valueOf(X2), String.valueOf(Y2 + " " + touchCount));
-                            Toast.makeText(MainActivity.this, "Need 1 Points more", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Need 1 Points more", Toast.LENGTH_SHORT).show();
                             break;
                         case 3:
                             X3 = Math.round(screenX / 100) * 100;
                             Y3 = Math.round(screenY / 100) * 100;
                             Log.e(String.valueOf(X3), String.valueOf(Y3 + " " + touchCount));
-                            Toast.makeText(MainActivity.this, "Added 4 Points", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Added 4 Points", Toast.LENGTH_SHORT).show();
                             break;
                     }
                     touchCount++;
@@ -125,11 +117,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (touchCount < 4) {
-                    Toast.makeText(MainActivity.this, "Need " + String.valueOf(4 - touchCount) + " Points more", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Need " + String.valueOf(4 - touchCount) + " Points more", Toast.LENGTH_SHORT).show();
                 } else {
                     uploadImage();
                 }
@@ -168,8 +160,10 @@ public class MainActivity extends AppCompatActivity {
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
-            final StorageReference Imageref = storageReference.child("temp/" + UUID.randomUUID());
+            final StorageReference Imageref = storageReference.child("images/" + UUID.randomUUID());
+            //final String downloadURL = storage.getReferenceFromUrl(storageRef).toString();
             Log.e("Stogare ref", Imageref.toString());
+            //Log.e("Download URL" , downloadURL);
             Imageref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -179,39 +173,34 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     String downloadURL = uri.toString();
-                                    Log.e("download temp url",downloadURL.toString());
                                     String username = etUsername.getText().toString();
                                     RetroUserModel retroUserModel = new RetroUserModel(username, X0, Y0, X1, Y1, X2, Y2, X3, Y3, downloadURL);
                                     Api api = retrofit.create(Api.class);
-                                    Call<RetroUserModel> call = api.getUser(retroUserModel);
+                                    Call<RetroUserModel> call = api.createUser(retroUserModel);
                                     call.enqueue(new Callback<RetroUserModel>() {
                                         @Override
                                         public void onResponse(Call<RetroUserModel> call, Response<RetroUserModel> response) {
                                             if (!response.isSuccessful()) {
-                                                Log.e("Response ", " " + response.body());
-                                                if(response.code()==401){
-                                                    Toast.makeText(getApplicationContext(),"Invalid Credintials",Toast.LENGTH_LONG).show();
-                                                }
                                                 Log.e("Errror on register ", " " + response.code());
                                                 return;
                                             }
                                             RetroUserModel res = response.body();
-                                            Intent intent = new Intent(MainActivity.this, SampleActivity.class);
-                                            intent.putExtra("User", res.getUsername());
-                                            startActivity(intent);
                                             Log.e("Sucess on register ", "" + response.code());
                                             Log.e("Username  ", "" + res.getUsername() + res.getImage_url());
+                                            Toast.makeText(getApplicationContext(),"User Registered",Toast.LENGTH_SHORT).show();
+                                            startActivity(new Intent(RegisterActivity.this,MainActivity.class));
+                                            finish();
                                         }
 
                                         @Override
                                         public void onFailure(Call<RetroUserModel> call, Throwable t) {
-
+                                            Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
                             });
 
-                            Toast.makeText(MainActivity.this, "Wait", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Wait", Toast.LENGTH_SHORT).show();
 
 
                         }
@@ -220,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(MainActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
