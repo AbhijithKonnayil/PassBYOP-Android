@@ -9,7 +9,8 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface Api {
-    String BASE_URL ="http://192.168.43.95:8000";
+    String BASE_URL ="http://35.154.159.76";
+    //String BASE_URL ="http://172.16.1.208:8000";
 
     //@GET("endpoint")
     //Call<RetroUserModel> getUser();

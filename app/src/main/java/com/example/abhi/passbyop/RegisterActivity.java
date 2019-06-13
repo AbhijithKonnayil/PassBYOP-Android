@@ -120,7 +120,10 @@ public class RegisterActivity extends AppCompatActivity {
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (touchCount < 4) {
+                if(etUsername.getText().toString().isEmpty()){
+                    Toast.makeText(RegisterActivity.this,"Username Cannot be empty",Toast.LENGTH_LONG).show();
+                }
+                else if (touchCount < 4) {
                     Toast.makeText(RegisterActivity.this, "Need " + String.valueOf(4 - touchCount) + " Points more", Toast.LENGTH_SHORT).show();
                 } else {
                     uploadImage();
@@ -181,6 +184,11 @@ public class RegisterActivity extends AppCompatActivity {
                                         @Override
                                         public void onResponse(Call<RetroUserModel> call, Response<RetroUserModel> response) {
                                             if (!response.isSuccessful()) {
+                                                if(response.code()==406){
+                                                    Toast.makeText(getApplicationContext(),"Username already exist",Toast.LENGTH_LONG).show();
+                                                    etUsername.setText("");
+                                                    touchCount=0;
+                                                }
                                                 Log.e("Errror on register ", " " + response.code());
                                                 return;
                                             }

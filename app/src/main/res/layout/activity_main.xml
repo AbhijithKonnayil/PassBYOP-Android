@@ -179,10 +179,19 @@
         <Button
             android:background="@color/colorPrimary"
             android:id="@+id/btnUpload"
+            android:layout_marginBottom="10dp"
             android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Sign Up" />
+
+        <Button
+            android:background="@color/red"
+            android:id="@+id/btnReset"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reset" />
     </LinearLayout>
 
 

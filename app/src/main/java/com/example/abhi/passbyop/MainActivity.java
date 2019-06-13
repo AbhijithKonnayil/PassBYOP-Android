@@ -37,12 +37,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static java.sql.Types.NULL;
+
 public class MainActivity extends AppCompatActivity {
     private TextView title;
-    private Button btnChoose, btnRegister, btnLogin;
+    private Button btnChoose, btnRegister, btnLogin, btnReset;
     private ImageView imageView;
     private EditText etUsername;
-    private int X0, Y0, X1, Y1, X2, Y2, X3, Y3, touchCount = 0;
+    private int X0, Y0, X1, Y1, X2, Y2, X3, Y3, touchCount = 0,attempts=0;
     private Uri filePath;
     FirebaseStorage storage;
     StorageReference storageReference;
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         Typeface custom_font = Typeface.createFromAsset(getAssets(),"fonts/KaushanScript-Regular.ttf");
         title = findViewById(R.id.title);
         title.setTypeface(custom_font);
-
+        btnReset= (Button) findViewById(R.id.btnReset);
         btnChoose = (Button) findViewById(R.id.btnChoose);
         btnRegister = (Button) findViewById(R.id.btnUpload);
         btnLogin = (Button) findViewById(R.id.login);
@@ -70,6 +72,14 @@ public class MainActivity extends AppCompatActivity {
                 .baseUrl(Api.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
+        btnReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                etUsername.setText("");
+                touchCount=0;
+                imageView.setImageResource(0);
+            }
+        });
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,7 +91,10 @@ public class MainActivity extends AppCompatActivity {
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                if (imageView.getDrawable()==null){
+                    Toast.makeText(getApplicationContext(),"Please choose an Image",Toast.LENGTH_LONG).show();
+                }else if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     float screenX = event.getX();
                     float screenY = event.getY();
 
@@ -128,9 +141,17 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (touchCount < 4) {
+                if(etUsername.getText().toString().isEmpty()){
+                    Toast.makeText(MainActivity.this,"Username Cannot be empty",Toast.LENGTH_LONG).show();
+                }
+                else if (touchCount < 4) {
+                    Log.e("dkj",etUsername.getText().toString());
                     Toast.makeText(MainActivity.this, "Need " + String.valueOf(4 - touchCount) + " Points more", Toast.LENGTH_SHORT).show();
-                } else {
+                }
+                else if(attempts>3){
+                    Toast.makeText(MainActivity.this,"Too Many Attempts !!",Toast.LENGTH_LONG).show();
+                }
+                else {
                     uploadImage();
                 }
             }
@@ -190,7 +211,18 @@ public class MainActivity extends AppCompatActivity {
                                             if (!response.isSuccessful()) {
                                                 Log.e("Response ", " " + response.body());
                                                 if(response.code()==401){
-                                                    Toast.makeText(getApplicationContext(),"Invalid Credintials",Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(getApplicationContext(),"Password Error",Toast.LENGTH_LONG).show();
+                                                    touchCount=0;
+                                                    X0=X1=X2=X3=Y0=Y1=Y2=Y3=NULL;
+                                                    imageView.setImageResource(0);
+                                                    attempts++;
+                                                }
+                                                else if(response.code()==404){
+                                                    Toast.makeText(getApplicationContext(),"Invalid Username",Toast.LENGTH_LONG).show();
+                                                    touchCount=0;
+                                                    etUsername.setText("");
+                                                    X0=X1=X2=X3=Y0=Y1=Y2=Y3=NULL;
+                                                    imageView.setImageResource(0);
                                                 }
                                                 Log.e("Errror on register ", " " + response.code());
                                                 return;
@@ -199,13 +231,14 @@ public class MainActivity extends AppCompatActivity {
                                             Intent intent = new Intent(MainActivity.this, SampleActivity.class);
                                             intent.putExtra("User", res.getUsername());
                                             startActivity(intent);
+                                            finish();
                                             Log.e("Sucess on register ", "" + response.code());
                                             Log.e("Username  ", "" + res.getUsername() + res.getImage_url());
                                         }
 
                                         @Override
                                         public void onFailure(Call<RetroUserModel> call, Throwable t) {
-
+                                            Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
                                         }
                                     });
                                 }
